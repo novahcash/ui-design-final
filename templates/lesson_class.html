@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose a Class</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fcfbf7;
+            padding: 2rem;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease-in-out, border-color 0.2s;
+        }
+        .card.selected {
+            border-color: #0d6efd;
+            box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+        }
+        .difficulty-label {
+            color: inherit;
+        }
+        .difficulty-level {
+            font-weight: bold;
+        }
+        .difficulty-easy {
+            color: green;
+        }
+        .difficulty-medium {
+            color: goldenrod;
+        }
+        .difficulty-hard {
+            color: red;
+        }
+        .timeline {
+            display: flex;
+            justify-content: center;
+            margin-top: 3rem;
+            gap: 1rem;
+        }
+        .step {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background-color: #e3e3e3;
+        }
+        .step.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .step.visited {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="mb-4">Choose a Class</h1>
+
+        <div class="card-grid">
+            <div class="card p-3 text-center" data-class="Fighter">
+                <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Fighter">
+                <h4 class="fw-bold">Fighter</h4>
+                <div class="difficulty-label">
+                    Difficulty: <span class="difficulty-level difficulty-easy">Easy</span>
+                </div>
+            </div>
+            <div class="card p-3 text-center" data-class="Rogue">
+                <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Rogue">
+                <h4 class="fw-bold">Rogue</h4>
+                <div class="difficulty-label">
+                    Difficulty: <span class="difficulty-level difficulty-medium">Medium</span>
+                </div>
+            </div>
+            <div class="card p-3 text-center" data-class="Wizard">
+                <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Wizard">
+                <h4 class="fw-bold">Wizard</h4>
+                <div class="difficulty-label">
+                    Difficulty: <span class="difficulty-level difficulty-hard">Hard</span>
+                </div>
+            </div>
+            <div class="card p-3 text-center" data-class="Cleric">
+                <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Cleric">
+                <h4 class="fw-bold">Cleric</h4>
+                <div class="difficulty-label">
+                    Difficulty: <span class="difficulty-level difficulty-hard">Hard</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline mt-5">
+            <a href="{{ url_for('learn', lesson_num=1) }}" class="step visited text-decoration-none">Intro</a>
+            <div class="step active">Class</div>
+        </div>
+
+        <form id="class-selection-form" action="{{ url_for('save_class_info') }}" method="POST" class="d-flex justify-content-between mt-3">
+            <a href="{{ url_for('learn', lesson_num=1) }}" class="btn btn-secondary">Back</a>
+            <input type="hidden" name="selected_class" id="selected-class" value="">
+            <button type="submit" id="next-btn" class="btn btn-primary disabled">Next</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(function () {
+            $('.card').on('click', function () {
+                $('.card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const selectedClass = $(this).data('class');
+                $('#selected-class').val(selectedClass);
+                $('#next-btn').removeClass('disabled');
+            });
+        });
+    </script>
+</body>
+</html>

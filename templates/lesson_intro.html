@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Creating your Character</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fefcf9;
+            padding: 2rem;
+        }
+        .tooltip-highlight {
+            color: #0d6efd;
+            text-decoration: underline dotted;
+            cursor: pointer;
+        }
+        .timeline {
+            display: flex;
+            justify-content: center;
+            margin-top: 4rem;
+            gap: 1rem;
+        }
+        .timeline .step {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background-color: #e3e3e3;
+        }
+        .timeline .step.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="mb-4">Creating your Character</h1>
+        <p>1. Choose your <span class="tooltip-highlight" data-bs-toggle="tooltip" title="Fill in during the next prototype">Class</span></p>
+        <p>2. Choose your <span class="tooltip-highlight" data-bs-toggle="tooltip" title="Fill in during the next prototype">Species</span></p>
+        <p>3. Choose your <span class="tooltip-highlight" data-bs-toggle="tooltip" title="Fill in during the next prototype">Background</span></p>
+        <p>4. <strong>Name your character,</strong> write their backstory, and optionally add a picture.</p>
+
+        <button class="btn btn-secondary mt-4">Example</button>
+
+        <div class="timeline mt-5">
+            <div class="step active">Intro</div>
+        </div>        
+
+        <div class="text-end mt-3">
+            <a href="{{ url_for('learn', lesson_num=2) }}" class="btn btn-primary">Next</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</body>
+</html>
