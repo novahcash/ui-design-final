@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scroll of Guidance</title>
+
+    <!-- Google Font for D&D-style serif headers -->
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap & main CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg mb-4" style="background-color: #8B0000;">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center text-white" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="40" class="me-2">
+            Scroll of Guidance
+        </a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('quiz_intro') }}">
+                        Test Your Knowledge                    
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    {% block content %}{% endblock %}
+</div>
+
+{% if steps and step_index is not none %}
+<!-- Timeline Progress Bar -->
+<div class="timeline">
+    <div class="arrow-nav {% if step_index == 0 %}disabled{% endif %}" data-step="{{ step_index - 1 }}">&#8592;</div>
+    {% for label in steps %}
+        <div class="step {% if loop.index0 == step_index %}active{% elif loop.index0 < step_index %}visited{% endif %}">
+            {{ label }}
+        </div>
+    {% endfor %}
+    <div class="arrow-nav {% if step_index == steps|length - 1 %}disabled{% endif %}" data-step="{{ step_index + 1 }}">&#8594;</div>
+</div>
+{% endif %}
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".arrow-nav").forEach(el => {
+        if (!el.classList.contains("disabled")) {
+            el.addEventListener("click", () => {
+                const step = el.dataset.step;
+                if (step !== undefined) {
+                    window.location.href = "/learn/" + step;
+                }
+            });
+        }
+    });
+});
+</script>
+
+{% block script %}{% endblock %}
+{% block class_specific_script %}{% endblock %}
+
+</body>
+</html>
