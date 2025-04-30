@@ -1,0 +1,103 @@
+{% extends "quiz_question.html" %}
+
+{% block quiz_content %}
+<p class="lead">
+    In Dungeons and Dragons, distance is measured with a grid of 5' squares. 
+    Moving one square will consume 5' of movement. Diagonal movement is special: 
+    every odd diagonal consumes 5', and every even diagonal consumes 10'.
+</p>
+
+<img src="{{ url_for('static', filename='quiz_q1.jpg') }}" class="img-fluid mb-4" alt="Grid example">
+
+<!-- Part 1 -->
+<form id="part1-form" class="mb-4">
+    <label><strong>In the above scenario, what is the minimum amount of feet must the fighter move to enter melee range of the goblin?</strong></label>
+    <div class="input-group w-50">
+        <input type="number" class="form-control" name="answer1" required>
+        <span class="input-group-text">feet</span>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <div id="part1-feedback" class="mt-2"></div>
+</form>
+
+<!-- Part 2 -->
+<form id="part2-form" class="mb-4" style="display: none;">
+    <label><strong>Assuming the fighter can move 30', can he reach the goblin?</strong></label>
+    <div class="input-group w-50">
+        <select class="form-select" name="answer2">
+            <option disabled selected>-- Select --</option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <div id="part2-feedback" class="mt-2"></div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+let score = 0;
+let part1Done = false;
+let part2Done = false;
+
+function tryEnableNext() {
+    if (part1Done && part2Done) {
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.style.pointerEvents = "auto";
+        nextBtn.style.opacity = "1";
+    }
+}
+
+document.getElementById("part1-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const answer = this.answer1.value;
+
+    fetch("{{ url_for('submit_quiz1') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ part: "1", answer })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const feedback = document.getElementById("part1-feedback");
+        feedback.textContent = data.feedback;
+        feedback.className = (data.correct ? "text-success" : "text-danger") + " mt-2";
+        score += data.score;
+        part1Done = true;
+        document.getElementById("part2-form").style.display = "block";
+    });
+});
+
+document.getElementById("part2-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const answer = this.answer2.value;
+
+    fetch("{{ url_for('submit_quiz1') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ part: "2", answer })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const feedback = document.getElementById("part2-feedback");
+        feedback.textContent = data.feedback;
+        feedback.className = (data.correct ? "text-success" : "text-danger") + " mt-2";
+        score += data.score;
+        part2Done = true;
+
+        // Submit final score to backend
+        fetch("{{ url_for('save') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                quiz_score: score,
+                next_step: -1
+            })
+        });
+
+        tryEnableNext();
+    });
+});
+</script>
+{% endblock %}

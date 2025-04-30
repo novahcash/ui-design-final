@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="themed-header text-center mb-4">Quiz Results</h1>
+
+    {% set quiz = progress.get('quiz', {}) %}
+    {% set answers = quiz.get('answers', {}) %}
+    {% set feedback = quiz.get('feedback', {}) %}
+    {% set score = quiz.get('score', 0) %}
+
+    <div class="card shadow p-4">
+        <h4 class="mb-3">Your Score: {{ score }}/1</h4>
+
+        <h5>Question 1: Distance and Diagonals</h5>
+        <p><strong>Your answer:</strong> {{ answers.get('part1', 'N/A') }}</p>
+        <p><strong>Feedback:</strong> <span class="{% if 'Correct' in feedback.get('part1', '') %}text-success{% else %}text-danger{% endif %}">{{ feedback.get('part1', 'N/A') }}</span></p>
+
+        <h5 class="mt-4">Question 2: Can the Fighter Reach?</h5>
+        <p><strong>Your answer:</strong> {{ answers.get('part2', 'N/A') }}</p>
+        <p><strong>Feedback:</strong> <span class="{% if 'Correct' in feedback.get('part2', '') %}text-success{% else %}text-danger{% endif %}">{{ feedback.get('part2', 'N/A') }}</span></p>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('home') }}" class="btn btn-primary">Return to Start</a>
+    </div>
+</div>
+{% endblock %}

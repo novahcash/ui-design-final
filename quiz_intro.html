@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="themed-header mb-4">Quiz</h1>
+
+    <p class="lead">
+        Congratulations on creating your character! You have hopefully picked up the basics of the game in the process. 
+        If you skipped straight here, you should know them as well.
+    </p>
+
+    <p class="lead">
+        Now, we will learn through practice! You will be presented with several in-game scenarios: 
+        answer them to the best of your ability. If you answer wrong, we will teach you the right answer!
+    </p>
+
+    <a href="{{ url_for('quiz', question_num=1) }}" class="btn btn-lg btn-primary mt-4 px-5 py-3" style="font-size: 1.5rem;">
+        Start the Quiz
+    </a>
+</div>
+{% endblock %}
