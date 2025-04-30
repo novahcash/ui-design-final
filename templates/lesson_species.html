@@ -1,99 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Choose a Species</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #fcfbf7;
-            padding: 2rem;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-        .card {
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.2s ease-in-out, border-color 0.2s;
-        }
-        .card.selected {
-            border-color: #0d6efd;
-            box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
-        }
-        .timeline {
-            display: flex;
-            justify-content: center;
-            margin-top: 3rem;
-            gap: 1rem;
-        }
-        .step {
-            padding: 0.5rem 1rem;
-            border-radius: 999px;
-            background-color: #e3e3e3;
-        }
-        .step.active {
-            background-color: #0d6efd;
-            color: white;
-        }
-        .step.visited {
-            background-color: #6c757d;
-            color: white;
-        }
-    </style>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-center themed-header mb-4">Choose a Species</h1>
 
-<div class="container">
-    <h1 class="mb-4">Choose a Species</h1>
+<form method="POST" action="{{ url_for('save') }}">
+    <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
+    <input type="hidden" id="selected_species" name="species" value="{{ session['progress'].get('species', '') }}">
 
-    <div class="card-grid">
-        <div class="card p-3 text-center" data-species="Human">
-            <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Human">
-            <h4 class="fw-bold">Human</h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        {% set species_list = [
+            {"name": "Human", "image": "human.png"},
+            {"name": "Elf", "image": "elf.png"},
+            {"name": "Dwarf", "image": "dwarf.png"}
+        ] %}
+        {% for s in species_list %}
+        <div class="col">
+            <div class="card h-100 shadow species-card" data-species="{{ s.name }}">
+                <img src="{{ url_for('static', filename=s.image) }}" class="card-img-top" alt="{{ s.name }}">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ s.name }}</h5>
+                </div>
+            </div>
         </div>
-        <div class="card p-3 text-center" data-species="Elf">
-            <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Elf">
-            <h4 class="fw-bold">Elf</h4>
-        </div>
-        <div class="card p-3 text-center" data-species="Dwarf">
-            <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Dwarf">
-            <h4 class="fw-bold">Dwarf</h4>
-        </div>
-        <div class="card p-3 text-center" data-species="Tiefling">
-            <img src="{{ url_for('static', filename='magnolia.png') }}" class="mb-2 img-fluid" alt="Tiefling">
-            <h4 class="fw-bold">Tiefling</h4>
-        </div>
+        {% endfor %}
     </div>
 
-    <div class="timeline mt-5">
-        <a href="{{ url_for('learn', lesson_num=1) }}" class="step visited text-decoration-none">Intro</a>
-        <a href="{{ url_for('learn', lesson_num=2) }}" class="step visited text-decoration-none">Class</a>
-        <a href="{{ url_for('learn', lesson_num=3) }}" class="step visited text-decoration-none">Class Info</a>
-        <div class="step active">Species</div>
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-primary" id="next-button" disabled>Next</button>
     </div>
+</form>
+{% endblock %}
 
-    <form id="species-selection-form" action="{{ url_for('save_species_info') }}" method="POST" class="d-flex justify-content-between mt-3">
-        <a href="{{ url_for('learn', lesson_num=3) }}" class="btn btn-secondary">Back</a>
-        <input type="hidden" name="selected_species" id="selected-species" value="">
-        <button type="submit" id="next-btn" class="btn btn-primary disabled">Next</button>
-    </form>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+{% block script %}
 <script>
-    $(function () {
-        $('.card').on('click', function () {
-            $('.card').removeClass('selected');
-            $(this).addClass('selected');
+    document.addEventListener("DOMContentLoaded", function () {
+        const cards = document.querySelectorAll('.species-card');
+        const hiddenInput = document.getElementById('selected_species');
+        const nextButton = document.getElementById('next-button');
 
-            const selectedSpecies = $(this).data('species');
-            $('#selected-species').val(selectedSpecies);
-            $('#next-btn').removeClass('disabled');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                cards.forEach(c => c.classList.remove('border-primary', 'border-3'));
+                card.classList.add('border-primary', 'border-3');
+
+                hiddenInput.value = card.dataset.species;
+                nextButton.disabled = false;
+            });
+
+            // Pre-select if already chosen
+            if (card.dataset.species === hiddenInput.value) {
+                card.classList.add('border-primary', 'border-3');
+                nextButton.disabled = false;
+            }
         });
     });
 </script>
-</body>
-</html>
+{% endblock %}

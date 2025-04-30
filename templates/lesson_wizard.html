@@ -1,0 +1,15 @@
+{% extends "class_info.html" %}
+
+{% block class_specific_content %}
+<!-- Wizard-Exclusive Spell Notes -->
+<div class="subsection">
+    <h4>Wizard Spellcasting Notes</h4>
+
+    <p>
+        {{ class_data.spells.prepared_text | safe }}
+    </p>
+    <p>
+        {{ class_data.spells.spellbook_text | safe }}
+    </p>
+</div>
+{% endblock %}

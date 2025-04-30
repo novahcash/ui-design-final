@@ -1,0 +1,55 @@
+{% extends "class_info.html" %}
+
+{% block class_specific_content %}
+<!-- Cleric-Specific Spellcasting Notes -->
+{% if class_data.spells.prepared_text %}
+<div class="subsection">
+    <h4>Prepared Spells</h4>
+    <p>{{ class_data.spells.prepared_text | safe }}</p>
+</div>
+{% endif %}
+
+<!-- Divine Order Feature -->
+<div class="subsection">
+    <h4>Divine Order</h4>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="protector" name="class_divine_order"
+               value="Protector"
+               onchange="toggleDivineOrder('Protector')"
+               {% if prior_selections.divine_order == 'Protector' %}checked{% endif %}>
+        <label class="form-check-label" for="protector">
+            <strong>Protector:</strong> You gain proficiency with Martial weapons and Heavy armor.
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="thaumaturge" name="class_divine_order"
+               value="Thaumaturge"
+               onchange="toggleDivineOrder('Thaumaturge')"
+               {% if prior_selections.divine_order == 'Thaumaturge' %}checked{% endif %}>
+        <label class="form-check-label" for="thaumaturge">
+            <strong>Thaumaturge:</strong> You know the Word of Radiance cantrip and gain a bonus equal to your Wisdom modifier to Intelligence (Arcana or Religion) checks.
+        </label>
+    </div>
+</div>
+{% endblock %}
+
+{% block abilities_section %}
+<!-- Cleric has no level 1 abilities; omit this section entirely -->
+{% endblock %}
+
+{% block class_specific_script %}
+<script>
+    function toggleDivineOrder(selected) {
+        const protector = document.getElementById("protector");
+        const thaumaturge = document.getElementById("thaumaturge");
+
+        if (selected === "Protector" && protector.checked) {
+            thaumaturge.checked = false;
+        } else if (selected === "Thaumaturge" && thaumaturge.checked) {
+            protector.checked = false;
+        }
+    }
+
+    {{ super() }}
+</script>
+{% endblock %}

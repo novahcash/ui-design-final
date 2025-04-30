@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('save') }}">
+    <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
+
+    <div class="row justify-content-center flex-column-reverse flex-md-row g-4">
+        <!-- Species-Specific Content (right on desktop, below on mobile) -->
+        <div class="col-md-8">
+            {% block species_specific_content %}{% endblock %}
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ url_for('learn', step_index=step_index - 1) }}" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+
+        <!-- Main Species Card (left on desktop, top on mobile) -->
+        <div class="col-md-4 d-flex justify-content-center">
+            <div class="card shadow" style="width: 100%; max-width: 22rem;">
+                <div class="card-header text-center themed-header">
+                    {{ species_data.name }}
+                </div>
+                <img src="{{ url_for('static', filename=species_data.image) }}" class="card-img-top" alt="{{ species_data.name }}">
+                <div class="card-body">
+                    <p><strong>Humanoid</strong></p>
+
+                    {% if species_data.allow_size_choice %}
+                    <div class="mb-2">
+                        <label><strong>Size:</strong></label>
+                        <select name="species_size" class="form-select">
+                            {% for size in species_data.sizes %}
+                            <option value="{{ size }}"
+                                {% if prior_selections.size == size %}selected{% endif %}>
+                                {{ size }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
+                    <p><strong>Size:</strong> {{ species_data.sizes[0] }}</p>
+                    <input type="hidden" name="species_size" value="{{ species_data.sizes[0] }}">
+                    {% endif %}
+
+                    <p><strong>Speed:</strong> {{ species_data.speed }}</p>
+                    <input type="hidden" name="species_speed" value="{{ species_data.speed }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,163 @@
+/* Base Layout */
+body {
+  background-color: #fefcf9;
+  font-family: 'Georgia', serif;
+  padding: 2rem;
+  color: #1a1a1a;
+}
+
+/* D&D Theme Colors */
+:root {
+  --main-color: #8B0000;     /* Dark Crimson */
+  --accent-color: #DAA520;   /* Goldenrod */
+  --light-gray: #f4f4f4;
+  --dark-gray: #2e2e2e;
+}
+
+/* Headers */
+.themed-header {
+  font-family: 'IM Fell English SC', serif;
+  font-weight: bold;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--main-color);
+}
+
+/* Cards */
+.card {
+  transition: transform 0.2s ease;
+}
+
+.card.shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.card.shadow:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Tooltip highlight */
+.tooltip-highlight {
+  color: #0d6efd;
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+/* Clickable dice roll */
+.clickable-roll {
+  text-decoration: underline;
+  cursor: pointer;
+  color: var(--main-color);
+}
+
+/* Skill/Dropdown info */
+.skill-info {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #555;
+}
+
+/* Timeline / Progress Bar */
+.timeline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--light-gray);
+  padding: 0.5rem;
+  border-top: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.timeline .step {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background-color: #e3e3e3;
+  font-weight: bold;
+  font-family: 'IM Fell English SC', serif;
+  font-size: 1rem;
+}
+
+.timeline .step.visited {
+  background-color: var(--dark-gray);
+  color: white;
+}
+
+.timeline .step.active {
+  background-color: var(--main-color);
+  color: white;
+}
+
+.arrow-nav {
+  font-size: 1.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.arrow-nav.disabled {
+  color: #aaa;
+  pointer-events: none;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--main-color);
+  border-color: var(--main-color);
+}
+
+.btn-primary:hover {
+  background-color: #a60000;
+  border-color: #a60000;
+}
+
+.btn-secondary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: black;
+}
+
+.btn-secondary:hover {
+  background-color: #eec85c;
+  border-color: #eec85c;
+  color: black;
+}
+
+/* Google Font for homepage title */
+@import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
+
+.homepage-wrapper {
+  background-color: #fefcf9;
+  padding: 10vh 2rem;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Homepage Title */
+.homepage-title {
+    font-family: 'Almendra SC', serif;
+    color: var(--main-color);
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+/* Subtitle */
+.homepage-subtitle {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+/* Start Button */
+.start-btn {
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    border-radius: 8px;
+}

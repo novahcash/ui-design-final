@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="mb-4">{{ class_data.name }}</h1>
+
+<div class="row">
+    <div class="col-md-4 text-center">
+        <img src="{{ url_for('static', filename=class_data.image) }}" class="img-fluid mb-2" alt="{{ class_data.name }}">
+        <div><strong>Level 1</strong> (Proficiency Bonus: +2)</div>
+        <div><strong>HP:</strong> {{ class_data.hp }}</div>
+        <div><strong>Primary Stat:</strong> {{ class_data.primary_stat }}</div>
+        <div><strong>Weapons:</strong> {{ class_data.weapon_proficiencies }}</div>
+        <div><strong>Armor:</strong> {{ class_data.armor_proficiencies }}</div>
+    </div>
+
+    <div class="col-md-8">
+        <form method="POST" action="{{ url_for('save') }}">
+            <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
+
+            <!-- Stat Chart -->
+            <div class="subsection">
+                <h4>Stats</h4>
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Stat</th><th>Modifier</th><th>Save</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for stat in class_data.stats[0:3] %}
+                            <td>
+                                <strong>{{ stat.name }} {{ stat.score }} ({{ stat.modifier }})</strong><br>
+                                <span>[Saving Throw]: <strong{% if stat.saving_throw_bold %} class="fw-bold"{% endif %}>{{ stat.saving_throw }}</strong></span>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for stat in class_data.stats[3:] %}
+                            <td>
+                                <strong>{{ stat.name }} {{ stat.score }} ({{ stat.modifier }})</strong><br>
+                                <span>[Saving Throw]: <strong{% if stat.saving_throw_bold %} class="fw-bold"{% endif %}>{{ stat.saving_throw }}</strong></span>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Skills -->
+            <div class="subsection">
+                <h4>Skills</h4>
+                <div class="row">
+                    {% for i in range(2) %}
+                    <div class="col-md-6 mb-2">
+                        <select class="form-select" name="class_skill_{{ i }}">
+                            <option disabled>-- Choose Skill --</option>
+                            {% for skill in class_data.available_skills %}
+                            <option value="{{ skill.name }}"
+                                data-info="{{ skill.description }}"
+                                {% if prior_selections["skill_" ~ i] == skill.name %}selected{% endif %}>
+                                {{ skill.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endfor %}
+                    <div id="skill-info-box" class="skill-info mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Spells -->
+            {% if class_data.spells %}
+            <div class="subsection">
+                <h4>Spells</h4>
+                <p>You have 2 level 1 spell slots and know the following spells:</p>
+
+                {% if class_data.spells.prepared_text %}
+                    <p>{{ class_data.spells.prepared_text | safe }}</p>
+                {% endif %}
+                {% if class_data.spells.spellbook_text %}
+                    <p>{{ class_data.spells.spellbook_text | safe }}</p>
+                {% endif %}
+
+                <div class="mb-3">
+                    <strong>Cantrips:</strong>
+                    {% for cantrip in class_data.spells.cantrips %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked disabled>
+                            <label class="form-check-label">{{ cantrip }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <strong>Level 1 Spells:</strong>
+                    {% for spell in class_data.spells.level1 %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked disabled>
+                            <label class="form-check-label">{{ spell }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% block abilities_section %}
+            <!-- Abilities -->
+            {% if class_data.abilities %}
+            <div class="subsection">
+                <h4>Abilities</h4>
+                <ul>
+                    {% for ability in class_data.abilities %}
+                    <li><strong>{{ ability.name }}:</strong> {{ ability.description | safe }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% endblock %}
+
+            <!-- Equipment -->
+            {% if class_data.equipment %}
+            <div class="subsection">
+                <h4>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleEquipment()">Show Equipment</button>
+                </h4>
+                <ul id="equipment-list" style="display:none;">
+                    {% for item in class_data.equipment %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Class-specific overrides -->
+            {% block class_specific_content %}{% endblock %}
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ url_for('learn', step_index=step_index - 1) }}" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Next</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block class_specific_script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const selects = document.querySelectorAll('select[name^="class_skill_"]');
+        const infoBox = document.getElementById('skill-info-box');
+
+        selects.forEach(sel => {
+            sel.addEventListener('change', () => {
+                const selected = sel.options[sel.selectedIndex];
+                const desc = selected.getAttribute('data-info');
+                infoBox.textContent = desc || '';
+            });
+
+            sel.addEventListener('blur', () => {
+                setTimeout(() => { infoBox.textContent = ''; }, 100);
+            });
+        });
+    });
+
+    function toggleEquipment() {
+        const list = document.getElementById('equipment-list');
+        const button = document.querySelector('button[onclick="toggleEquipment()"]');
+        if (list.style.display === 'none') {
+            list.style.display = 'block';
+            button.textContent = "Hide Equipment";
+        } else {
+            list.style.display = 'none';
+            button.textContent = "Show Equipment";
+        }
+    }
+</script>
+{% endblock %}
