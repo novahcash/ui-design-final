@@ -1,44 +1,67 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1 class="mb-4">{{ class_data.name }}</h1>
 
 <div class="row">
-    <div class="col-md-4 text-center">
-        <img src="{{ url_for('static', filename=class_data.image) }}" class="img-fluid mb-2" alt="{{ class_data.name }}">
-        <div><strong>Level 1</strong> (Proficiency Bonus: +2)</div>
-        <div><strong>HP:</strong> {{ class_data.hp }}</div>
-        <div><strong>Primary Stat:</strong> {{ class_data.primary_stat }}</div>
-        <div><strong>Weapons:</strong> {{ class_data.weapon_proficiencies }}</div>
-        <div><strong>Armor:</strong> {{ class_data.armor_proficiencies }}</div>
+    <!-- Main Info Card -->
+    <div class="col-md-4">
+        <div class="card shadow p-3 mb-4">
+            <h3 class="themed-header">{{ class_data.name }}</h3>
+            <img src="{{ url_for('static', filename=class_data.image) }}" class="img-fluid mb-2" alt="{{ class_data.name }}">
+            <div><strong>Level 1</strong> (Proficiency Bonus: +2)</div>
+            <div><strong>HP:</strong> {{ class_data.hp }}</div>
+            <div><strong>Primary Ability:</strong> {{ class_data.primary_stat }}</div>
+            <div><strong>Saving Throw Proficiencies:</strong> {{ class_data.saving_throws | join(", ") }}</div>
+            <div><strong>Weapons:</strong> {{ class_data.weapon_proficiencies }}</div>
+            <div><strong>Armor:</strong> {{ class_data.armor_proficiencies }}</div>
+            {% if class_data.equipment %}
+            <div><strong>Equipment:</strong> {{ class_data.equipment | join(", ") }}</div>
+            {% endif %}
+        </div>
     </div>
 
+    <!-- Right Column -->
     <div class="col-md-8">
         <form method="POST" action="{{ url_for('save') }}">
             <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
 
-            <!-- Stat Chart -->
-            <div class="subsection">
-                <h4>Stats</h4>
+            <!-- Abilities -->
+            <div class="subsection mb-4">
+                <h4 class="subsection-header">Abilities</h4>
                 <table class="table table-bordered text-center">
-                    <thead>
-                        <tr>
-                            <th>Stat</th><th>Modifier</th><th>Save</th>
-                        </tr>
-                    </thead>
                     <tbody>
                         <tr>
-                            {% for stat in class_data.stats[0:3] %}
+                            {% for ability in class_data.stats[0:3] %}
                             <td>
-                                <strong>{{ stat.name }} {{ stat.score }} ({{ stat.modifier }})</strong><br>
-                                <span>[Saving Throw]: <strong{% if stat.saving_throw_bold %} class="fw-bold"{% endif %}>{{ stat.saving_throw }}</strong></span>
+                                <a href="#" class="tooltip-highlight" 
+                                   data-bs-toggle="popover" 
+                                   data-bs-trigger="hover focus click" 
+                                   data-bs-content="{{ ability.tooltip }}" 
+                                   onclick="return false;">
+                                    {{ ability.name }} {{ ability.score }} ({{ ability.modifier }})
+                                </a><br>
+                                {% if loop.first %}
+                                <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click" 
+                                      data-bs-content="A Saving Throw is a roll made to avoid or reduce harmful effects, using your ability modifier (plus proficiency if you're proficient).">
+                                    Saving Throw:
+                                </span>
+                                {% else %}
+                                Saving Throw:
+                                {% endif %}
+                                <strong>{{ ability.saving_throw }}</strong>
                             </td>
                             {% endfor %}
                         </tr>
                         <tr>
-                            {% for stat in class_data.stats[3:] %}
+                            {% for ability in class_data.stats[3:] %}
                             <td>
-                                <strong>{{ stat.name }} {{ stat.score }} ({{ stat.modifier }})</strong><br>
-                                <span>[Saving Throw]: <strong{% if stat.saving_throw_bold %} class="fw-bold"{% endif %}>{{ stat.saving_throw }}</strong></span>
+                                <a href="#" class="tooltip-highlight" 
+                                   data-bs-toggle="popover" 
+                                   data-bs-trigger="hover focus click" 
+                                   data-bs-content="{{ ability.tooltip }}" 
+                                   onclick="return false;">
+                                    {{ ability.name }} {{ ability.score }} ({{ ability.modifier }})
+                                </a><br>
+                                Saving Throw: <strong>{{ ability.saving_throw }}</strong>
                             </td>
                             {% endfor %}
                         </tr>
@@ -47,33 +70,39 @@
             </div>
 
             <!-- Skills -->
-            <div class="subsection">
-                <h4>Skills</h4>
+            <div class="subsection mb-4">
+                <h4 class="subsection-header">Skill Proficiencies</h4>
+                <p class="skill-info">
+                    Roll a d20 to perform a skill check; add the associated ability's modifier to the result. If proficient, add your proficiency bonus.
+                </p>
                 <div class="row">
                     {% for i in range(2) %}
-                    <div class="col-md-6 mb-2">
-                        <select class="form-select" name="class_skill_{{ i }}">
-                            <option disabled>-- Choose Skill --</option>
+                    <div class="col-md-6 mb-3">
+                        {% set default_skill = class_data.available_skills[i].name %}
+                        <select class="form-select skill-select" name="class_skill_{{ i }}" data-index="{{ i }}">
                             {% for skill in class_data.available_skills %}
                             <option value="{{ skill.name }}"
                                 data-info="{{ skill.description }}"
-                                {% if prior_selections["skill_" ~ i] == skill.name %}selected{% endif %}>
+                                {% if prior_selections["skill_" ~ i] == skill.name %}
+                                    selected
+                                {% elif prior_selections["skill_" ~ i] is not defined and skill.name == default_skill %}
+                                    selected
+                                {% endif %}>
                                 {{ skill.name }}
                             </option>
                             {% endfor %}
                         </select>
+                        <div class="skill-info mt-1" id="skill-info-{{ i }}"></div>
                     </div>
                     {% endfor %}
-                    <div id="skill-info-box" class="skill-info mt-2"></div>
                 </div>
             </div>
 
             <!-- Spells -->
             {% if class_data.spells %}
-            <div class="subsection">
-                <h4>Spells</h4>
+            <div class="subsection mb-4">
+                <h4 class="subsection-header">Spells</h4>
                 <p>You have 2 level 1 spell slots and know the following spells:</p>
-
                 {% if class_data.spells.prepared_text %}
                     <p>{{ class_data.spells.prepared_text | safe }}</p>
                 {% endif %}
@@ -90,7 +119,6 @@
                         </div>
                     {% endfor %}
                 </div>
-
                 <div class="mb-3">
                     <strong>Level 1 Spells:</strong>
                     {% for spell in class_data.spells.level1 %}
@@ -104,10 +132,9 @@
             {% endif %}
 
             {% block abilities_section %}
-            <!-- Abilities -->
             {% if class_data.abilities %}
-            <div class="subsection">
-                <h4>Abilities</h4>
+            <div class="subsection mb-4">
+                <h4 class="subsection-header">Abilities</h4>
                 <ul>
                     {% for ability in class_data.abilities %}
                     <li><strong>{{ ability.name }}:</strong> {{ ability.description | safe }}</li>
@@ -117,27 +144,8 @@
             {% endif %}
             {% endblock %}
 
-            <!-- Equipment -->
-            {% if class_data.equipment %}
-            <div class="subsection">
-                <h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleEquipment()">Show Equipment</button>
-                </h4>
-                <ul id="equipment-list" style="display:none;">
-                    {% for item in class_data.equipment %}
-                    <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
             <!-- Class-specific overrides -->
             {% block class_specific_content %}{% endblock %}
-
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{{ url_for('learn', step_index=step_index - 1) }}" class="btn btn-secondary">Back</a>
-                <button type="submit" class="btn btn-primary">Next</button>
-            </div>
         </form>
     </div>
 </div>
@@ -145,33 +153,48 @@
 
 {% block class_specific_script %}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const selects = document.querySelectorAll('select[name^="class_skill_"]');
-        const infoBox = document.getElementById('skill-info-box');
+$(function () {
+    const selects = $('.skill-select');
+    const infoBoxes = [$('#skill-info-0'), $('#skill-info-1')];
 
-        selects.forEach(sel => {
-            sel.addEventListener('change', () => {
-                const selected = sel.options[sel.selectedIndex];
-                const desc = selected.getAttribute('data-info');
-                infoBox.textContent = desc || '';
-            });
+    function updateSkillInfo(index) {
+        const sel = selects.eq(index);
+        const selected = sel.find(":selected");
+        infoBoxes[index].text(selected.data('info') || '');
+    }
 
-            sel.addEventListener('blur', () => {
-                setTimeout(() => { infoBox.textContent = ''; }, 100);
+    function updateOptions() {
+        const selectedValues = selects.map(function() {
+            return $(this).val();
+        }).get();
+
+        selects.each(function (idx, sel) {
+            $(sel).find("option").each(function () {
+                const opt = $(this);
+                const optVal = opt.val();
+                const otherSelected = selectedValues.includes(optVal) && optVal !== $(sel).val();
+                opt.prop("disabled", otherSelected);
             });
+        });
+    }
+
+    // Initialize skill info and options at page load
+    updateSkillInfo(0);
+    updateSkillInfo(1);
+    updateOptions();
+
+    selects.each(function (idx) {
+        $(this).on('change', function () {
+            updateSkillInfo(idx);
+            updateOptions();
         });
     });
 
-    function toggleEquipment() {
-        const list = document.getElementById('equipment-list');
-        const button = document.querySelector('button[onclick="toggleEquipment()"]');
-        if (list.style.display === 'none') {
-            list.style.display = 'block';
-            button.textContent = "Hide Equipment";
-        } else {
-            list.style.display = 'none';
-            button.textContent = "Show Equipment";
-        }
-    }
+    // Initialize Bootstrap popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.forEach(function (el) {
+        new bootstrap.Popover(el);
+    });
+});
 </script>
 {% endblock %}

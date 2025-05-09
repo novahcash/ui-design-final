@@ -2,32 +2,40 @@
 
 {% block class_specific_content %}
 <!-- Rogue Abilities -->
-<div class="subsection">
-    <h4>Abilities</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Abilities</h4>
     <ul>
         <li>
             <strong>Expertise:</strong> You gain 
-            <span class="tooltip-highlight" title="Add double your proficiency bonus to the respective skill check. You can only have Expertise in skills you are already Proficient in.">Expertise</span> 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Add double your proficiency bonus to the respective skill check. You can only have Expertise in skills you are already Proficient in.">
+                Expertise
+            </span> 
             in 
-            <span class="tooltip-highlight" title="(Dexterity) Pick pockets or manipulate objects.">Sleight of Hand</span> 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="(Dexterity) Pick pockets or manipulate objects.">Sleight of Hand</span> 
             and 
-            <span class="tooltip-highlight" title="(Dexterity) Move quietly and unseen.">Stealth</span>.
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="(Dexterity) Move quietly and unseen.">Stealth</span>.
         </li>
         <li>
             <strong>Sneak Attack:</strong> Once per turn, deal an extra 1d6 damage to one creature you hit with an attack roll if you have 
-            <span class="tooltip-highlight" title="Fill in during the next prototype">Advantage</span> 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Roll two d20s and keep the higher.">Advantage</span> 
             on the roll and used a Finesse or a Ranged weapon. You don't need Advantage if at least one ally is within 5' of the target, isn't 
-            <span class="tooltip-highlight" title="Fill in during the next prototype">Incapacitated</span>, 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Unable to act, move, or speak.">Incapacitated</span>, 
             and you don't have 
-            <span class="tooltip-highlight" title="Fill in during the next prototype">Disadvantage</span> 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Roll two d20s and keep the lower.">Disadvantage</span> 
             on the attack roll.
         </li>
     </ul>
 </div>
 
 <!-- Thieves' Cant -->
-<div class="subsection">
-    <h4>Thieves' Cant</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Thieves' Cant</h4>
     <p>You know Thieves' Cant and one other language of your choice:</p>
     <select class="form-select" name="class_bonus_language">
         <option disabled selected>-- Choose a language --</option>
@@ -39,15 +47,19 @@
 </div>
 
 <!-- Weapon Masteries -->
-<div class="subsection">
-    <h4>Weapon Masteries</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Weapon Masteries</h4>
+    <p class="skill-info">
+        When you hit an enemy with the respective weapon, apply the listed effect.
+    </p>
     <ul>
         <li>
             <strong>Dagger:</strong> <em>Nick</em> — When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn.
         </li>
         <li>
             <strong>Shortbow:</strong> <em>Vex</em> — If you hit a creature with this weapon and deal damage, you have 
-            <span class="tooltip-highlight" title="Fill in during the next prototype">Advantage</span> 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Roll two d20s and keep the higher.">Advantage</span> 
             on your next attack roll against it before the end of your next turn.
         </li>
     </ul>

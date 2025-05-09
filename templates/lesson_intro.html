@@ -7,11 +7,4 @@
 <p>2. Choose your <strong>Species</strong></p>
 <p>3. Choose your <strong>Background</strong></p>
 <p>4. <strong>Name your character,</strong> write their backstory, and optionally add a picture.</p>
-
-<form method="POST" action="{{ url_for('save') }}">
-    <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-primary">Next</button>
-    </div>
-</form>
 {% endblock %}

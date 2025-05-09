@@ -4,9 +4,5 @@
 <div class="container">
     <h1 class="themed-header">Quiz</h1>
     {% block quiz_content %}{% endblock %}
-
-    <div class="text-end mt-4">
-        <a href="{{ url_for('quiz_result') }}" class="btn btn-secondary" id="next-btn" style="pointer-events: none; opacity: 0.5;">Finish</a>
-    </div>
 </div>
 {% endblock %}

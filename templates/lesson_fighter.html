@@ -3,54 +3,84 @@
 {% block class_specific_content %}
 
 <!-- Fighting Style Section -->
-<div class="subsection">
-    <h4>Fighting Style</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Fighting Style</h4>
     <div class="row">
         <div class="col-md-6">
             <select id="fighting-style" name="class_fighting_style" class="form-select">
-                <option disabled selected>-- Choose Fighting Style --</option>
-                <option value="Archery" data-info="You gain a +2 bonus to attack rolls you make with ranged weapons.">Archery</option>
-                <option value="Blind Fighting" data-info="You have blindsight within a range of 10 feet.">Blind Fighting</option>
-                <option value="Defense" data-info="While wearing armor, you gain a +1 bonus to AC.">Defense</option>
-                <option value="Dueling" data-info="When wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls.">Dueling</option>
-                <option value="Great Weapon Fighting" data-info="Reroll 1s or 2s on damage dice for melee weapon attacks with two-handed weapons.">Great Weapon Fighting</option>
-                <option value="Interception" data-info="Use your reaction to reduce damage dealt to a creature within 5 feet by 1d10 + proficiency bonus.">Interception</option>
-                <option value="Protection" data-info="When a creature you can see attacks a target other than you within 5 feet, use your reaction to impose disadvantage.">Protection</option>
-                <option value="Thrown Weapon Fighting" data-info="Draw a thrown weapon as part of an attack; +2 damage with thrown weapons.">Thrown Weapon Fighting</option>
-                <option value="Two-Weapon Fighting" data-info="Add ability modifier to the damage of your off-hand attack.">Two-Weapon Fighting</option>
-                <option value="Unarmed Fighting" data-info="Your unarmed strike deals 1d6 bludgeoning damage (or 1d8 if not holding any weapons or shield).">Unarmed Fighting</option>
+                <option disabled {% if not prior_selections.fighting_style %}selected{% endif %}>-- Choose Fighting Style --</option>
+                <option value="Archery" data-info="You gain a +2 bonus to attack rolls you make with ranged weapons." {% if prior_selections.fighting_style == 'Archery' %}selected{% endif %}>Archery</option>
+                <option value="Blind Fighting" data-info="You have blindsight within a range of 10 feet." {% if prior_selections.fighting_style == 'Blind Fighting' %}selected{% endif %}>Blind Fighting</option>
+                <option value="Defense" data-info="While wearing armor, you gain a +1 bonus to AC." {% if prior_selections.fighting_style == 'Defense' %}selected{% endif %}>Defense</option>
+                <option value="Dueling" data-info="When wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls." {% if prior_selections.fighting_style == 'Dueling' %}selected{% endif %}>Dueling</option>
+                <option value="Great Weapon Fighting" data-info="Reroll 1s or 2s on damage dice for melee weapon attacks with two-handed weapons." {% if prior_selections.fighting_style == 'Great Weapon Fighting' %}selected{% endif %}>Great Weapon Fighting</option>
+                <option value="Interception" data-info="Use your reaction to reduce damage dealt to a creature within 5 feet by 1d10 + proficiency bonus." {% if prior_selections.fighting_style == 'Interception' %}selected{% endif %}>Interception</option>
+                <option value="Protection" data-info="When a creature you can see attacks a target other than you within 5 feet, use your reaction to impose disadvantage." {% if prior_selections.fighting_style == 'Protection' %}selected{% endif %}>Protection</option>
+                <option value="Thrown Weapon Fighting" data-info="Draw a thrown weapon as part of an attack; +2 damage with thrown weapons." {% if prior_selections.fighting_style == 'Thrown Weapon Fighting' %}selected{% endif %}>Thrown Weapon Fighting</option>
+                <option value="Two-Weapon Fighting" data-info="Add ability modifier to the damage of your off-hand attack." {% if prior_selections.fighting_style == 'Two-Weapon Fighting' %}selected{% endif %}>Two-Weapon Fighting</option>
+                <option value="Unarmed Fighting" data-info="Your unarmed strike deals 1d6 bludgeoning damage (or 1d8 if not holding any weapons or shield)." {% if prior_selections.fighting_style == 'Unarmed Fighting' %}selected{% endif %}>Unarmed Fighting</option>
             </select>
-            <div id="fighting-style-info" class="skill-info"></div>
+            <div id="fighting-style-info" class="skill-info mt-1">
+                {% if prior_selections.fighting_style %}
+                    {{ ({
+                        "Archery": "You gain a +2 bonus to attack rolls you make with ranged weapons.",
+                        "Blind Fighting": "You have blindsight within a range of 10 feet.",
+                        "Defense": "While wearing armor, you gain a +1 bonus to AC.",
+                        "Dueling": "When wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls.",
+                        "Great Weapon Fighting": "Reroll 1s or 2s on damage dice for melee weapon attacks with two-handed weapons.",
+                        "Interception": "Use your reaction to reduce damage dealt to a creature within 5 feet by 1d10 + proficiency bonus.",
+                        "Protection": "When a creature you can see attacks a target other than you within 5 feet, use your reaction to impose disadvantage.",
+                        "Thrown Weapon Fighting": "Draw a thrown weapon as part of an attack; +2 damage with thrown weapons.",
+                        "Two-Weapon Fighting": "Add ability modifier to the damage of your off-hand attack.",
+                        "Unarmed Fighting": "Your unarmed strike deals 1d6 bludgeoning damage (or 1d8 if not holding any weapons or shield)."
+                    })[prior_selections.fighting_style] }}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Weapon Masteries -->
-<div class="subsection">
-    <h4>Weapon Masteries</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Weapon Masteries</h4>
+    <p class="skill-info">When you hit an enemy with the respective weapon, apply the listed effect.</p>
     <ul>
-        <li><strong>Greatsword:</strong> <em>Graze</em> – If your attack roll misses a creature, you can deal damage equal to your Strength modifier.</li>
-        <li><strong>Flail:</strong> <em>Sap</em> – If you hit a creature with this weapon, that creature has <span class="tooltip-highlight" title="Fill in during the next prototype">Disadvantage</span> on its next attack roll before the start of your next turn.</li>
-        <li><strong>Javelin:</strong> <em>Slow</em> – If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn.</li>
+        <li><strong>Greatsword:</strong> <em>Graze.</em> If your attack roll misses a creature, you can deal damage equal to your Strength modifier.</li>
+        <li><strong>Flail:</strong> <em>Sap.</em> If you hit a creature with this weapon, that creature has 
+            <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+                  data-bs-content="Advantage: Roll two d20s and keep the higher. Disadvantage: Roll two d20s and keep the lower.">
+                Disadvantage
+            </span> 
+            on its next attack roll before the start of your next turn.
+        </li>
+        <li><strong>Javelin:</strong> <em>Slow.</em> If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn.</li>
     </ul>
 </div>
 
-<!-- Abilities (already shared) -->
 {% endblock %}
 
 {% block class_specific_script %}
+{{ super() }}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const styleSelect = document.getElementById('fighting-style');
         const infoBox = document.getElementById('fighting-style-info');
 
-        styleSelect?.addEventListener('change', function () {
-            const selected = styleSelect.options[styleSelect.selectedIndex];
-            infoBox.textContent = selected.getAttribute('data-info') || '';
-        });
+        if (styleSelect && infoBox) {
+            const updateInfo = () => {
+                const selected = styleSelect.options[styleSelect.selectedIndex];
+                const desc = selected.getAttribute("data-info");
+                infoBox.textContent = desc || '';
+            };
 
-        styleSelect?.addEventListener('blur', function () {
-            setTimeout(() => { infoBox.textContent = ''; }, 150);
+            styleSelect.addEventListener("change", updateInfo);
+            updateInfo();
+        }
+
+        // Initialize tooltips
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        popoverTriggerList.forEach(function (el) {
+            new bootstrap.Popover(el);
         });
     });
 </script>

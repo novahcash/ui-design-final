@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="themed-header text-center mb-4">Your Character Sheet</h1>
+
+<div class="row justify-content-center flex-column flex-lg-row g-4">
+  <!-- Character Info Column -->
+  <div class="col-lg-4 d-flex justify-content-center">
+    <div class="card shadow mb-4" style="width: 100%; max-width: 22rem;">
+      <div class="card-header text-center themed-header">
+        {{ progress.name or "Unnamed Hero" }}
+      </div>
+      {% if progress.image %}
+      <img src="{{ url_for('static', filename=progress.image.split('static/')[-1]) }}"
+           class="card-img-top" alt="Character Image">
+      {% endif %}
+      <div class="card-body">
+        <p><strong>Species:</strong> Human</p>
+        <p><strong>Size:</strong> {{ progress.species_info.size or "Medium (4-7')" }}</p>
+        <p><strong>Speed:</strong> {{ progress.species_info.speed or "30 feet" }}</p>
+        <p><strong>Class:</strong> Fighter</p>
+        <p><strong>Background:</strong> Guard</p>
+        <p><strong>Backstory:</strong><br>{{ progress.backstory or "No backstory provided." }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abilities and Skills Column -->
+  <div class="col-lg-4">
+    <!-- Abilities -->
+    <div class="card shadow mb-4 p-3">
+      <h4 class="subsection-header">Abilities</h4>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Strength: 17 (+3)</li>
+        <li class="list-group-item">Dexterity: 14 (+2)</li>
+        <li class="list-group-item">Constitution: 13 (+1)</li>
+        <li class="list-group-item">Intelligence: 8 (-1)</li>
+        <li class="list-group-item">Wisdom: 11 (+0)</li>
+        <li class="list-group-item">Charisma: 12 (+1)</li>
+      </ul>
+    </div>
+
+    <!-- Skills -->
+    <div class="card shadow mb-4 p-3">
+      <h4 class="subsection-header">Skills</h4>
+      <p class="skill-info mb-2">Proficient skills marked with * and include a +2 proficiency bonus.</p>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Acrobatics: +4 *</li>
+        <li class="list-group-item">Animal Handling: +0</li>
+        <li class="list-group-item">Arcana: -1</li>
+        <li class="list-group-item">Athletics: +5 *</li>
+        <li class="list-group-item">Deception: +1</li>
+        <li class="list-group-item">History: -1</li>
+        <li class="list-group-item">Insight: +0</li>
+        <li class="list-group-item">Intimidation: +1</li>
+        <li class="list-group-item">Investigation: -1</li>
+        <li class="list-group-item">Medicine: +0</li>
+        <li class="list-group-item">Nature: -1</li>
+        <li class="list-group-item">Perception: +2 *</li>
+        <li class="list-group-item">Performance: +1</li>
+        <li class="list-group-item">Persuasion: +3 *</li>
+        <li class="list-group-item">Religion: -1</li>
+        <li class="list-group-item">Sleight of Hand: +2</li>
+        <li class="list-group-item">Stealth: +2</li>
+        <li class="list-group-item">Survival: +2 *</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Features and Equipment Column -->
+  <div class="col-lg-4">
+    <!-- Features -->
+    <div class="card shadow mb-4 p-3">
+      <h4 class="subsection-header">Features</h4>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Second Wind (2 Uses): As a Bonus Action, regain 1d10+1 HP.</li>
+        {% if progress.class_info.fighter_feature %}
+        <li class="list-group-item">{{ progress.class_info.fighter_feature }}</li>
+        {% endif %}
+        <li class="list-group-item">Weapon Mastery - Greatsword (Graze)</li>
+        <li class="list-group-item">Weapon Mastery - Flail (Sap)</li>
+        <li class="list-group-item">Weapon Mastery - Javelin (Slow)</li>
+        <li class="list-group-item">Human: Resourceful — Gain Heroic Inspiration after Long Rest.</li>
+        <li class="list-group-item">Human: Skillful — Proficient in Persuasion.</li>
+        <li class="list-group-item">Human: Versatile — Feat: Tough.</li>
+        <li class="list-group-item">Guard: Tool Proficiency — Gaming Set</li>
+      </ul>
+    </div>
+
+    <!-- Equipment -->
+    <div class="card shadow mb-4 p-3">
+      <h4 class="subsection-header">Equipment</h4>
+      <p>Spear, Light Crossbow, 20 Bolts, Gaming Set, Hooded Lantern, Manacles, Quiver, Traveler’s Clothes, 12 GP</p>
+      <p>Chain Mail, Greatsword, Flail, 8 Javelins, Dungeoneer's Pack, 4 GP</p>
+    </div>
+  </div>
+</div>
+
+<!-- Finish -->
+<div class="text-center mt-4">
+  <p class="text-muted">You may print or screenshot this page to keep a record of your character.</p>
+  <a href="{{ url_for('quiz_intro') }}" class="btn btn-secondary btn-lg">Finish</a>
+</div>
+{% endblock %}

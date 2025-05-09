@@ -1,0 +1,68 @@
+{% extends "quiz_question.html" %}
+
+{% block quiz_content %}
+<p class="lead mb-4">
+    You are traveling down a dark forest road known for sudden goblin ambushes. You feel like something is watching you…
+</p>
+
+<div class="row">
+    <!-- Left Column: Image -->
+    <div class="col-md-6">
+        <img src="{{ url_for('static', filename='quiz_q2.jpg') }}" class="img-fluid mb-4" alt="A dark forest road.">
+    </div>
+
+    <!-- Right Column: Quiz Body -->
+    <div class="col-md-6">
+        <form id="quiz2-form" class="mb-4">
+            <label><strong>To determine if you spot anything, roll a <input type="text" class="form-control d-inline w-auto" name="answer" required> check.</strong></label>
+            <div class="text-center mb-4">
+                <button type="submit" class="btn btn-warning px-4 py-2">Submit</button>
+            </div>
+            <div id="quiz2-feedback" class="mt-2"></div>
+        </form>
+
+        <!-- Next Button -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('quiz', question_num=3) }}" class="btn btn-warning px-5 py-3" id="next-btn" style="pointer-events: none; opacity: 0.5; font-size: 1.25rem;">
+                Next
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+let submitted = false;
+
+document.getElementById("quiz2-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (submitted) return;
+
+    const form = this;
+    const answer = form.answer.value.trim();
+
+    fetch("{{ url_for('submit_quiz2') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ answer })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const feedback = document.getElementById("quiz2-feedback");
+        feedback.textContent = data.feedback;
+        feedback.className = (data.correct ? "text-success" : "text-danger") + " mt-2";
+
+        // Disable input and button
+        form.answer.disabled = true;
+        form.querySelector("button").disabled = true;
+        submitted = true;
+
+        // Enable Next
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.style.pointerEvents = "auto";
+        nextBtn.style.opacity = "1";
+    });
+});
+</script>
+{% endblock %}

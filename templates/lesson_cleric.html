@@ -3,15 +3,15 @@
 {% block class_specific_content %}
 <!-- Cleric-Specific Spellcasting Notes -->
 {% if class_data.spells.prepared_text %}
-<div class="subsection">
-    <h4>Prepared Spells</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Prepared Spells</h4>
     <p>{{ class_data.spells.prepared_text | safe }}</p>
 </div>
 {% endif %}
 
 <!-- Divine Order Feature -->
-<div class="subsection">
-    <h4>Divine Order</h4>
+<div class="subsection mb-4">
+    <h4 class="subsection-header">Divine Order</h4>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" id="protector" name="class_divine_order"
                value="Protector"
@@ -38,6 +38,7 @@
 {% endblock %}
 
 {% block class_specific_script %}
+{{ super() }}
 <script>
     function toggleDivineOrder(selected) {
         const protector = document.getElementById("protector");
@@ -49,7 +50,5 @@
             protector.checked = false;
         }
     }
-
-    {{ super() }}
 </script>
 {% endblock %}

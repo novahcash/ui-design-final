@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="themed-header text-center mb-4">Quiz Results</h1>
+
+    {% set quiz = progress.get('quiz', {}) %}
+    {% set answers = quiz.get('answers', {}) %}
+    {% set feedback = quiz.get('feedback', {}) %}
+    {% set score = quiz.get('score', 0) %}
+    {% set total = quiz.get('total', 1) %}
+
+    <div class="card shadow p-4">
+        <h4 class="mb-3">Your Score: {{ score }}/{{ total }}</h4>
+
+        <!-- Question 1 -->
+        <h5>Question 1: Distance and Diagonals</h5>
+        <ul>
+            <li>
+                <strong>Part 1:</strong> {{ answers.get('q1_part1', 'N/A') }} —
+                <span class="{% if 'Correct' in feedback.get('q1_part1', '') %}text-success{% else %}text-danger{% endif %}">
+                    {{ feedback.get('q1_part1', 'N/A') }}
+                </span>
+            </li>
+            <li>
+                <strong>Part 2:</strong> {{ answers.get('q1_part2', 'N/A') }} —
+                <span class="{% if 'Correct' in feedback.get('q1_part2', '') %}text-success{% else %}text-danger{% endif %}">
+                    {{ feedback.get('q1_part2', 'N/A') }}
+                </span>
+            </li>
+        </ul>
+
+        <!-- Question 2 -->
+        <h5 class="mt-4">Question 2: Goblin Ambush</h5>
+        <p>
+            <strong>Your answer:</strong> {{ answers.get('q2', 'N/A') }} —
+            <span class="{% if 'Correct' in feedback.get('q2', '') %}text-success{% else %}text-danger{% endif %}">
+                {{ feedback.get('q2', 'N/A') }}
+            </span>
+        </p>
+
+        <!-- Question 3 -->
+        <h5 class="mt-4">Question 3: Combat and Magic</h5>
+        <ul>
+            <li>
+                <strong>Part 1:</strong> {{ answers.get('q3_part1', 'N/A') }} —
+                <span class="{% if 'Correct' in feedback.get('q3_part1', '') %}text-success{% else %}text-danger{% endif %}">
+                    {{ feedback.get('q3_part1', 'N/A') }}
+                </span>
+            </li>
+            <li>
+                <strong>Part 2:</strong> {{ answers.get('q3_part2', 'N/A') }} —
+                <span class="{% if 'Correct' in feedback.get('q3_part2', '') %}text-success{% else %}text-danger{% endif %}">
+                    {{ feedback.get('q3_part2', 'N/A') }}
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('quiz_intro') }}" class="btn btn-warning btn-lg">Retake Quiz</a>
+    </div>
+</div>
+{% endblock %}

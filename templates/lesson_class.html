@@ -1,11 +1,18 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1 class="themed-header">Choose a Class</h1>
+<h1 class="themed-header mb-4">Choose a Class</h1>
 
 <form method="POST" action="{{ url_for('save') }}">
     <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
-    <input type="hidden" id="selected_class" name="class" value="{{ session['progress'].get('class', '') }}">
+
+    {# --- Robust default: if session class is None or missing, default to Fighter --- #}
+    {% set selected_class = session['progress'].get('class') %}
+    {% if not selected_class or selected_class == 'None' %}
+        {% set selected_class = 'Fighter' %}
+    {% endif %}
+
+    <input type="hidden" id="selected_class" name="class" value="{{ selected_class }}">
 
     <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         {% set classes = [
@@ -19,21 +26,17 @@
             <div class="card h-100 shadow class-card text-center" data-class="{{ c.name }}">
                 <img src="{{ url_for('static', filename=c.image) }}" class="card-img-top" alt="{{ c.name }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ c.name }}</h5>
+                    <h5 class="subsection-header text-center">{{ c.name }}</h5>
                     <p class="card-text">
-                        Difficulty: 
+                        Difficulty:
                         <span class="{% if c.difficulty == 'Easy' %}text-success{% elif c.difficulty == 'Medium' %}text-warning{% else %}text-danger{% endif %}">
                             {{ c.difficulty }}
                         </span>
                     </p>
                 </div>
-            </div>
+            </div>            
         </div>
         {% endfor %}
-    </div>
-
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-primary" id="next-button" disabled>Next</button>
     </div>
 </form>
 {% endblock %}
@@ -43,20 +46,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     const cards = document.querySelectorAll(".class-card");
     const hiddenInput = document.getElementById("selected_class");
-    const nextButton = document.getElementById("next-button");
 
     cards.forEach(card => {
         card.addEventListener("click", () => {
             cards.forEach(c => c.classList.remove("border-primary", "border-3"));
             card.classList.add("border-primary", "border-3");
             hiddenInput.value = card.dataset.class;
-            nextButton.disabled = false;
+            // No Next button anymore — timeline submits when moving forward
         });
 
-        // Re-select if already chosen
+        // Re-select if already chosen or default to Fighter
         if (card.dataset.class === hiddenInput.value) {
             card.classList.add("border-primary", "border-3");
-            nextButton.disabled = false;
         }
     });
 });

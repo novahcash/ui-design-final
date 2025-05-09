@@ -1,0 +1,120 @@
+{% extends "species_info.html" %}
+
+{% block species_specific_content %}
+<!-- Resourceful -->
+<div class="mb-4">
+    <h4 class="subsection-header">Resourceful</h4>
+    <p>
+        You gain a 
+        <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+              data-bs-content="Expend to reroll any die immediately after rolling it; you must use the new roll. You can only have one, but may give it to another player without one.">
+            Heroic Inspiration
+        </span> 
+        whenever you complete a 
+        <span class="tooltip-highlight" data-bs-toggle="popover" data-bs-trigger="hover focus click"
+              data-bs-content="Fully restore HP and other resources at the end of an adventuring day.">
+            Long Rest
+        </span>.
+    </p>
+</div>
+
+<!-- Skillful -->
+<div class="mb-4">
+    <h4 class="subsection-header">Skillful</h4>
+    <p>Become proficient in a chosen skill.</p>
+
+    {% set all_skills = [
+        {"name": "Acrobatics", "description": "(Dexterity) Perform acrobatic stunts."},
+        {"name": "Animal Handling", "description": "(Wisdom) Calm or control animals."},
+        {"name": "Arcana", "description": "(Intelligence) Recall magical lore."},
+        {"name": "Athletics", "description": "(Strength) Perform feats of strength."},
+        {"name": "Deception", "description": "(Charisma) Lie or mislead."},
+        {"name": "History", "description": "(Intelligence) Recall historical knowledge."},
+        {"name": "Insight", "description": "(Wisdom) Read people and situations."},
+        {"name": "Intimidation", "description": "(Charisma) Threaten or coerce others."},
+        {"name": "Investigation", "description": "(Intelligence) Search or analyze clues."},
+        {"name": "Medicine", "description": "(Wisdom) Stabilize or diagnose conditions."},
+        {"name": "Nature", "description": "(Intelligence) Identify plants, animals, or terrain features."},
+        {"name": "Perception", "description": "(Wisdom) Spot or hear hidden things."},
+        {"name": "Performance", "description": "(Charisma) Impress an audience."},
+        {"name": "Persuasion", "description": "(Charisma) Influence or negotiate."},
+        {"name": "Religion", "description": "(Intelligence) Understand divine lore."},
+        {"name": "Sleight of Hand", "description": "(Dexterity) Pick pockets or manipulate objects."},
+        {"name": "Stealth", "description": "(Dexterity) Move quietly and unseen."},
+        {"name": "Survival", "description": "(Wisdom) Track, hunt, or endure wilderness."}
+    ] %}
+
+    <select id="human_skill" name="species_bonus_skill" class="form-select">
+        {% for skill in all_skills %}
+        <option value="{{ skill.name }}"
+                data-info="{{ skill.description }}"
+                {% if prior_selections.bonus_skill == skill.name %}selected{% endif %}>
+            {{ skill.name }}
+        </option>
+        {% endfor %}
+    </select>
+    <div id="human-skill-info" class="skill-info mt-1">
+        {% if prior_selections.bonus_skill %}
+            {{ (all_skills | selectattr('name', 'equalto', prior_selections.bonus_skill) | list).0.description }}
+        {% endif %}
+    </div>
+</div>
+
+<!-- Versatile -->
+<div class="mb-4">
+    <h4 class="subsection-header">Versatile</h4>
+    <p>Gain an origin feat of your choice.</p>
+    <select id="origin_feat" name="species_origin_feat" class="form-select">
+        {% for feat in origin_feats %}
+        <option value="{{ feat.name }}"
+                data-info="{{ feat.description }}"
+                {% if prior_selections.origin_feat == feat.name %}selected{% endif %}>
+            {{ feat.name }}
+        </option>
+        {% endfor %}
+    </select>
+    <div id="origin-feat-info" class="skill-info mt-1">
+        {% if prior_selections.origin_feat %}
+            {{ (origin_feats | selectattr('name', 'equalto', prior_selections.origin_feat) | list).0.description }}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block class_specific_script %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const skillSelect = document.getElementById("human_skill");
+    const skillInfoBox = document.getElementById("human-skill-info");
+
+    if (skillSelect && skillInfoBox) {
+        const updateSkillDescription = () => {
+            const selected = skillSelect.options[skillSelect.selectedIndex];
+            const desc = selected.getAttribute("data-info");
+            skillInfoBox.textContent = desc || '';
+        };
+        skillSelect.addEventListener("change", updateSkillDescription);
+        updateSkillDescription();
+    }
+
+    const featSelect = document.getElementById("origin_feat");
+    const featInfoBox = document.getElementById("origin-feat-info");
+
+    if (featSelect && featInfoBox) {
+        const updateFeatDescription = () => {
+            const selected = featSelect.options[featSelect.selectedIndex];
+            const desc = selected.getAttribute("data-info");
+            featInfoBox.textContent = desc || '';
+        };
+        featSelect.addEventListener("change", updateFeatDescription);
+        updateFeatDescription();
+    }
+
+    // Bootstrap popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.forEach(function (el) {
+        new bootstrap.Popover(el);
+    });
+});
+</script>
+{% endblock %}

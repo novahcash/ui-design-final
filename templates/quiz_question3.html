@@ -2,26 +2,28 @@
 
 {% block quiz_content %}
 <p class="lead mb-4">
-    In Dungeons and Dragons, distance is measured with a grid of 5' squares. 
-    Moving one square will consume 5' of movement. Diagonal movement is special: 
-    every odd diagonal consumes 5', and every even diagonal consumes 10'.
+    You engage the goblin in combat! Having rolled a higher initiative score, you go first! You move ten feet forward and strike it with your sword.
 </p>
 
 <div class="row">
     <!-- Left Column: Image -->
     <div class="col-md-6">
-        <img src="{{ url_for('static', filename='quiz_q1.jpg') }}" class="img-fluid mb-4" alt="Grid example">
+        <img src="{{ url_for('static', filename='quiz_q3.png') }}" class="img-fluid mb-4" alt="A goblin ambush in a dark forest.">
     </div>
 
-    <!-- Right Column: Questions -->
+    <!-- Right Column: Quiz Body -->
     <div class="col-md-6">
         <!-- Part 1 -->
         <form id="part1-form" class="mb-4">
-            <label><strong>1. What is the minimum amount of feet the fighter must move to reach melee range of the goblin?</strong></label>
-            <div class="input-group mb-3">
-                <input type="number" class="form-control" name="answer1" required>
-                <span class="input-group-text">feet</span>
-            </div>
+            <label><strong>1. Make a 
+                <select class="form-select d-inline w-auto" name="answer1" required>
+                    <option disabled selected>-- Select --</option>
+                    <option>Attack roll</option>
+                    <option>Damage roll</option>
+                    <option>Saving throw</option>
+                </select>
+                to determine if your strike lands.</strong>
+            </label>
             <div class="text-center mb-4">
                 <button type="submit" class="btn btn-warning px-4 py-2">Submit</button>
             </div>
@@ -30,24 +32,25 @@
 
         <!-- Part 2 -->
         <form id="part2-form" class="mb-4" style="display: none;">
-            <label><strong>2. Assuming the fighter can move 30', can he reach the goblin?</strong></label>
-            <div class="input-group mb-3">
-                <select class="form-select" name="answer2">
+            <label><strong>2. The goblin retaliates with a magic spell! You will be paralyzed if it affects you! Make a 
+                <select class="form-select d-inline w-auto" name="answer2" required>
                     <option disabled selected>-- Select --</option>
-                    <option>Yes</option>
-                    <option>No</option>
+                    <option>Attack roll</option>
+                    <option>Damage roll</option>
+                    <option>Saving throw</option>
                 </select>
-            </div>
+                to determine if you are afflicted.</strong>
+            </label>
             <div class="text-center mb-4">
                 <button type="submit" class="btn btn-warning px-4 py-2">Submit</button>
             </div>
             <div id="part2-feedback" class="mt-2"></div>
         </form>
 
-        <!-- Next Button -->
+        <!-- Finish Button -->
         <div class="text-center mt-4">
-            <a href="{{ url_for('quiz', question_num=2) }}" class="btn btn-warning px-5 py-3" id="next-btn" style="pointer-events: none; opacity: 0.5; font-size: 1.25rem;">
-                Next
+            <a href="{{ url_for('quiz_result') }}" class="btn btn-warning px-5 py-3" id="next-btn" style="pointer-events: none; opacity: 0.5; font-size: 1.25rem;">
+                Finish
             </a>
         </div>
     </div>
@@ -56,11 +59,10 @@
 
 {% block script %}
 <script>
-let score = 0;
 let part1Done = false;
 let part2Done = false;
 
-function tryEnableNext() {
+function tryEnableFinish() {
     if (part1Done && part2Done) {
         const nextBtn = document.getElementById("next-btn");
         nextBtn.style.pointerEvents = "auto";
@@ -71,9 +73,9 @@ function tryEnableNext() {
 document.getElementById("part1-form").addEventListener("submit", function (e) {
     e.preventDefault();
     const form = this;
-    const answer = form.answer1.value;
+    const answer = form.answer1.value.trim();
 
-    fetch("{{ url_for('submit_quiz1') }}", {
+    fetch("{{ url_for('submit_quiz3') }}", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ part: "1", answer })
@@ -83,23 +85,22 @@ document.getElementById("part1-form").addEventListener("submit", function (e) {
         const feedback = document.getElementById("part1-feedback");
         feedback.textContent = data.feedback;
         feedback.className = (data.correct ? "text-success" : "text-danger") + " mt-2";
-        score += data.score;
-        part1Done = true;
 
-        // Disable input and button
         form.answer1.disabled = true;
         form.querySelector("button").disabled = true;
 
+        part1Done = true;
         document.getElementById("part2-form").style.display = "block";
+        tryEnableFinish();
     });
 });
 
 document.getElementById("part2-form").addEventListener("submit", function (e) {
     e.preventDefault();
     const form = this;
-    const answer = form.answer2.value;
+    const answer = form.answer2.value.trim();
 
-    fetch("{{ url_for('submit_quiz1') }}", {
+    fetch("{{ url_for('submit_quiz3') }}", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ part: "2", answer })
@@ -109,24 +110,12 @@ document.getElementById("part2-form").addEventListener("submit", function (e) {
         const feedback = document.getElementById("part2-feedback");
         feedback.textContent = data.feedback;
         feedback.className = (data.correct ? "text-success" : "text-danger") + " mt-2";
-        score += data.score;
-        part2Done = true;
 
-        // Disable input and button
         form.answer2.disabled = true;
         form.querySelector("button").disabled = true;
 
-        // Submit final score to backend
-        fetch("{{ url_for('save') }}", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-                quiz_score: score,
-                next_step: -1
-            })
-        });
-
-        tryEnableNext();
+        part2Done = true;
+        tryEnableFinish();
     });
 });
 </script>

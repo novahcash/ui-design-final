@@ -1,0 +1,20 @@
+{% extends "species_info.html" %}
+
+{% block species_specific_content %}
+<div class="text-center mt-3">
+    <p class="fs-5">Still working on it! Just be a human for now.</p>
+</div>
+{% endblock %}
+
+{% block class_specific_script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const forwardArrow = document.querySelector('.arrow-nav[data-step="{{ step_index + 1 }}"]');
+        if (forwardArrow) {
+            forwardArrow.classList.add('disabled');
+            forwardArrow.style.pointerEvents = 'none';
+            forwardArrow.style.opacity = '0.5';
+        }
+    });
+</script>
+{% endblock %}

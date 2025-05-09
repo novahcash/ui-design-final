@@ -24,6 +24,14 @@ body {
   color: var(--main-color);
 }
 
+.subsection-header {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 1.5rem;
+  color: var(--main-color);
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
 /* Cards */
 .card {
   transition: transform 0.2s ease;
@@ -40,7 +48,7 @@ body {
 
 /* Tooltip highlight */
 .tooltip-highlight {
-  color: #0d6efd;
+  color: var(--accent-color);
   text-decoration: underline dotted;
   cursor: pointer;
 }
@@ -82,6 +90,7 @@ body {
   font-weight: bold;
   font-family: 'IM Fell English SC', serif;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 .timeline .step.visited {
@@ -90,14 +99,15 @@ body {
 }
 
 .timeline .step.active {
-  background-color: var(--main-color);
-  color: white;
+  background-color: var(--accent-color);
+  color: black;
 }
 
 .arrow-nav {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
   user-select: none;
+  color: var(--accent-color); /* goldenrod */
 }
 
 .arrow-nav.disabled {
@@ -142,22 +152,24 @@ body {
 
 /* Homepage Title */
 .homepage-title {
-    font-family: 'Almendra SC', serif;
-    color: var(--main-color);
-    font-size: 4rem;
-    margin-bottom: 1rem;
+  font-family: 'Almendra SC', serif;
+  color: var(--main-color);
+  font-size: 4rem;
+  margin-bottom: 1rem;
 }
 
 /* Subtitle */
 .homepage-subtitle {
-    color: var(--accent-color);
-    font-size: 1.5rem;
-    font-weight: 500;
+  font-family: 'IM Fell English SC', serif;
+  color: black;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 /* Start Button */
 .start-btn {
-    padding: 1rem 3rem;
-    font-size: 1.5rem;
-    border-radius: 8px;
+  padding: 1rem 3rem;
+  font-size: 1.5rem;
+  border-radius: 8px;
+  font-family: 'IM Fell English SC', serif;
 }

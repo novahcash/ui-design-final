@@ -1,57 +1,58 @@
 {% extends "layout.html" %}
+
 {% block content %}
-<h1 class="text-center themed-header mb-4">Choose a Species</h1>
+<h1 class="themed-header">Choose a Species</h1>
 
 <form method="POST" action="{{ url_for('save') }}">
     <input type="hidden" name="next_step" value="{{ step_index + 1 }}">
-    <input type="hidden" id="selected_species" name="species" value="{{ session['progress'].get('species', '') }}">
+    <input type="hidden" id="selected_species" name="species" value="{{ session['progress'].get('species', '') or 'Human' }}">
 
-    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+    <div class="row justify-content-center row-cols-1 row-cols-md-3 g-4">
         {% set species_list = [
-            {"name": "Human", "image": "human.png"},
-            {"name": "Elf", "image": "elf.png"},
-            {"name": "Dwarf", "image": "dwarf.png"}
+            {"name": "Human", "image": "magnolia.png"},
+            {"name": "Elf", "image": "magnolia.png"},
+            {"name": "Dwarf", "image": "magnolia.png"}
         ] %}
         {% for s in species_list %}
         <div class="col">
-            <div class="card h-100 shadow species-card" data-species="{{ s.name }}">
+            <div class="card h-100 shadow species-card text-center" data-species="{{ s.name }}">
                 <img src="{{ url_for('static', filename=s.image) }}" class="card-img-top" alt="{{ s.name }}">
-                <div class="card-body text-center">
-                    <h5 class="card-title">{{ s.name }}</h5>
+                <div class="card-body">
+                    <h5 class="subsection-header text-center">{{ s.name }}</h5>
                 </div>
             </div>
         </div>
         {% endfor %}
-    </div>
-
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-primary" id="next-button" disabled>Next</button>
     </div>
 </form>
 {% endblock %}
 
 {% block script %}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const cards = document.querySelectorAll('.species-card');
-        const hiddenInput = document.getElementById('selected_species');
-        const nextButton = document.getElementById('next-button');
+document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll('.species-card');
+    const hiddenInput = document.getElementById('selected_species');
 
-        cards.forEach(card => {
-            card.addEventListener('click', () => {
-                cards.forEach(c => c.classList.remove('border-primary', 'border-3'));
-                card.classList.add('border-primary', 'border-3');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const selected = card.dataset.species;
 
-                hiddenInput.value = card.dataset.species;
-                nextButton.disabled = false;
+            hiddenInput.value = selected;
+
+            cards.forEach(c => c.classList.remove('border-primary', 'border-3'));
+            card.classList.add('border-primary', 'border-3');
+
+            fetch('/set_species', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ species: selected })
             });
-
-            // Pre-select if already chosen
-            if (card.dataset.species === hiddenInput.value) {
-                card.classList.add('border-primary', 'border-3');
-                nextButton.disabled = false;
-            }
         });
+
+        if (card.dataset.species === hiddenInput.value) {
+            card.classList.add('border-primary', 'border-3');
+        }
     });
+});
 </script>
 {% endblock %}
